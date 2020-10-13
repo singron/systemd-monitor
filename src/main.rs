@@ -7,6 +7,7 @@ extern crate url;
 
 use serde::Deserialize;
 use std::fmt::Write;
+use std::time::{Duration, Instant};
 
 pub mod systemd_manager {
     #![allow(unused)]
@@ -75,14 +76,21 @@ fn send_status(
     hostname: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let params = [("status", status), ("hostname", hostname)];
+    let deadline = Instant::now() + Duration::from_secs(30);
     let mut tries = 0;
-    loop {
+    while Instant::now() < deadline {
         if tries > 0 {
             std::thread::sleep(std::time::Duration::from_secs(tries));
         }
         tries += 1;
         let target_url = url::Url::parse_with_params(monitor_url, &params)?;
-        let mut res: reqwest::Response = client.get(target_url).send()?;
+        let mut res: reqwest::Response = match client.get(target_url).send() {
+            Ok(res) => res,
+            Err(e) => {
+                eprintln!("Error sending request: {}", e);
+                continue;
+            }
+        };
         let res_status = res.status();
         use std::io::Read;
         let mut body = Vec::new();
@@ -104,8 +112,9 @@ fn send_status(
         if let Some(e) = &rbody.error {
             return Err(format!("Error from server: {}", e).into());
         }
-        break Ok(());
+        return Ok(());
     }
+    return Err(format!("deadline exceeded").into());
 }
 
 #[derive(Deserialize)]

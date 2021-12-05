@@ -58,11 +58,17 @@
   <property name="TimeoutAbortUSec" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
+  <property name="TimeoutStartFailureMode" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="TimeoutStopFailureMode" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="RuntimeMaxUSec" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="WatchdogUSec" type="t" access="read">
-   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="WatchdogTimestamp" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
@@ -143,6 +149,9 @@
   <property name="ExecCondition" type="a(sasbttttuii)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
   </property>
+  <property name="ExecConditionEx" type="a(sasasttttuii)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
+  </property>
   <property name="ExecStartPre" type="a(sasbttttuii)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
   </property>
@@ -164,12 +173,34 @@
   <property name="ExecReload" type="a(sasbttttuii)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
   </property>
+  <property name="ExecReloadEx" type="a(sasasttttuii)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
+  </property>
   <property name="ExecStop" type="a(sasbttttuii)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
+  </property>
+  <property name="ExecStopEx" type="a(sasasttttuii)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
   </property>
   <property name="ExecStopPost" type="a(sasbttttuii)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
   </property>
+  <property name="ExecStopPostEx" type="a(sasasttttuii)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="invalidates"/>
+  </property>
+  <method name="BindMount">
+   <arg type="s" name="source" direction="in"/>
+   <arg type="s" name="destination" direction="in"/>
+   <arg type="b" name="read_only" direction="in"/>
+   <arg type="b" name="mkdir" direction="in"/>
+  </method>
+  <method name="MountImage">
+   <arg type="s" name="source" direction="in"/>
+   <arg type="s" name="destination" direction="in"/>
+   <arg type="b" name="read_only" direction="in"/>
+   <arg type="b" name="mkdir" direction="in"/>
+   <arg type="a(ss)" name="options" direction="in"/>
+  </method>
   <property name="Slice" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
@@ -179,7 +210,16 @@
   <property name="MemoryCurrent" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
+  <property name="MemoryAvailable" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
   <property name="CPUUsageNSec" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="EffectiveCPUs" type="ay" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="EffectiveMemoryNodes" type="ay" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="TasksCurrent" type="t" access="read">
@@ -210,11 +250,11 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <method name="GetProcesses">
-   <arg type="a(sus)" direction="out"/>
+   <arg type="a(sus)" name="processes" direction="out"/>
   </method>
   <method name="AttachProcesses">
-   <arg type="s" direction="in"/>
-   <arg type="au" direction="in"/>
+   <arg type="s" name="subcgroup" direction="in"/>
+   <arg type="au" name="pids" direction="in"/>
   </method>
   <property name="Delegate" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
@@ -241,6 +281,12 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="CPUQuotaPeriodUSec" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="AllowedCPUs" type="ay" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="AllowedMemoryNodes" type="ay" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="IOAccounting" type="b" access="read">
@@ -343,6 +389,27 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="DisableControllers" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="ManagedOOMSwap" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="ManagedOOMMemoryPressure" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="ManagedOOMMemoryPressureLimit" type="u" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="ManagedOOMPreference" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="BPFProgram" type="a(ss)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="SocketBindAllow" type="a(iiqq)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="SocketBindDeny" type="a(iiqq)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="Environment" type="as" access="read">
@@ -465,7 +532,34 @@
   <property name="RootImage" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="RootImageOptions" type="a(ss)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RootHash" type="ay" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RootHashPath" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RootHashSignature" type="ay" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RootHashSignaturePath" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RootVerity" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="ExtensionImages" type="a(sba(ss))" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="MountImages" type="a(ssba(ss))" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="OOMScoreAdjust" type="i" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="CoredumpFilter" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="Nice" type="i" access="read">
@@ -484,6 +578,9 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="CPUAffinity" type="ay" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="CPUAffinityFromNUMA" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="NUMAPolicy" type="i" access="read">
@@ -561,6 +658,9 @@
   <property name="LogExtraFields" type="aay" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="LogNamespace" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="SecureBits" type="i" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -582,6 +682,12 @@
   <property name="RemoveIPC" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="SetCredential" type="a(say)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="LoadCredential" type="a(ss)" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="SupplementaryGroups" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -597,6 +703,12 @@
   <property name="InaccessiblePaths" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="ExecPaths" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="NoExecPaths" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="MountFlags" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -606,10 +718,16 @@
   <property name="PrivateDevices" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="ProtectClock" type="b" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="ProtectKernelTunables" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="ProtectKernelModules" type="b" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="ProtectKernelLogs" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="ProtectControlGroups" type="b" access="read">
@@ -622,6 +740,9 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="PrivateMounts" type="b" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="PrivateIPC" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="ProtectHome" type="s" access="read">
@@ -661,6 +782,9 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="SystemCallErrorNumber" type="i" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="SystemCallLog" type="(bas)" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="Personality" type="s" access="read">
@@ -735,16 +859,28 @@
   <property name="KeyringMode" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="ProtectProc" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="ProcSubset" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="ProtectHostname" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="NetworkNamespacePath" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="IPCNamespacePath" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="KillMode" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="KillSignal" type="i" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="RestartKillSignal" type="i" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="FinalKillSignal" type="i" access="read">
@@ -815,6 +951,15 @@
   <property name="OnFailure" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="OnFailureOf" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="OnSuccess" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="OnSuccessOf" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="Triggers" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -827,7 +972,16 @@
   <property name="ReloadPropagatedFrom" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="PropagatesStopTo" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="StopPropagatedFrom" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="JoinsNamespaceOf" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="SliceOf" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="RequiresMountsFor" type="as" access="read">
@@ -843,6 +997,8 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="ActiveState" type="s" access="read">
+  </property>
+  <property name="FreezerState" type="s" access="read">
   </property>
   <property name="SubState" type="s" access="read">
   </property>
@@ -896,6 +1052,9 @@
   <property name="CanClean" type="as" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="CanFreeze" type="b" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="Job" type="(uo)" access="read">
   </property>
   <property name="StopWhenUnneeded" type="b" access="read">
@@ -913,6 +1072,9 @@
   <property name="DefaultDependencies" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="OnSuccessJobMode" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="OnFailureJobMode" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -920,7 +1082,10 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="NeedDaemonReload" type="b" access="read">
-   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="Markers" type="as" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <property name="JobTimeoutUSec" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
@@ -994,59 +1159,63 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
   <method name="Start">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="Stop">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="Reload">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="Restart">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="TryRestart">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="ReloadOrRestart">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="ReloadOrTryRestart">
-   <arg type="s" direction="in"/>
-   <arg type="o" direction="out"/>
+   <arg type="s" name="mode" direction="in"/>
+   <arg type="o" name="job" direction="out"/>
   </method>
   <method name="EnqueueJob">
-   <arg type="s" direction="in"/>
-   <arg type="s" direction="in"/>
-   <arg type="u" direction="out"/>
-   <arg type="o" direction="out"/>
-   <arg type="s" direction="out"/>
-   <arg type="o" direction="out"/>
-   <arg type="s" direction="out"/>
-   <arg type="a(uosos)" direction="out"/>
+   <arg type="s" name="job_type" direction="in"/>
+   <arg type="s" name="job_mode" direction="in"/>
+   <arg type="u" name="job_id" direction="out"/>
+   <arg type="o" name="job_path" direction="out"/>
+   <arg type="s" name="unit_id" direction="out"/>
+   <arg type="o" name="unit_path" direction="out"/>
+   <arg type="s" name="job_type" direction="out"/>
+   <arg type="a(uosos)" name="affected_jobs" direction="out"/>
   </method>
   <method name="Kill">
-   <arg type="s" direction="in"/>
-   <arg type="i" direction="in"/>
+   <arg type="s" name="whom" direction="in"/>
+   <arg type="i" name="signal" direction="in"/>
   </method>
   <method name="ResetFailed">
   </method>
   <method name="SetProperties">
-   <arg type="b" direction="in"/>
-   <arg type="a(sv)" direction="in"/>
+   <arg type="b" name="runtime" direction="in"/>
+   <arg type="a(sv)" name="properties" direction="in"/>
   </method>
   <method name="Ref">
   </method>
   <method name="Unref">
   </method>
   <method name="Clean">
-   <arg type="as" direction="in"/>
+   <arg type="as" name="mask" direction="in"/>
+  </method>
+  <method name="Freeze">
+  </method>
+  <method name="Thaw">
   </method>
  </interface>
 </node>

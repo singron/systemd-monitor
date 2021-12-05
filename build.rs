@@ -11,7 +11,6 @@ fn main() {
         let xml = std::fs::read_to_string(xml_path).unwrap();
         let opts = dbus_codegen::GenOpts {
             methodtype: None,
-            crhandler: None,
             ..Default::default()
         };
         let output = dbus_codegen::generate(&xml, &opts).unwrap();

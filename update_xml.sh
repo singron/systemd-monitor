@@ -1,4 +1,6 @@
-#! /bin/bash
+#! /usr/bin/env bash
+
+set -eu
 
 dbus-send --system \
 	--dest=org.freedesktop.systemd1 \

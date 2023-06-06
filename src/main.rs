@@ -70,7 +70,7 @@ struct Response {
 }
 
 fn send_status(
-    client: &reqwest::Client,
+    client: &reqwest::blocking::Client,
     monitor_url: &str,
     status: &str,
     hostname: &str,
@@ -84,7 +84,7 @@ fn send_status(
         }
         tries += 1;
         let target_url = url::Url::parse_with_params(monitor_url, &params)?;
-        let mut res: reqwest::Response = match client.get(target_url).send() {
+        let mut res: reqwest::blocking::Response = match client.get(target_url).send() {
             Ok(res) => res,
             Err(e) => {
                 eprintln!("Error sending request: {}", e);
@@ -146,7 +146,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for s in &config.services {
         check_service(&conn, &manager, s, &mut error_message)?;
     }
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let hostname = gethostname::gethostname().into_string().unwrap();
     let status = if error_message.is_empty() {
         "ok"

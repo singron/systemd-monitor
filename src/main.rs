@@ -3,7 +3,6 @@ extern crate gethostname;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
-extern crate url;
 
 use serde::Deserialize;
 use std::fmt::Write;
@@ -83,7 +82,7 @@ fn send_status(
             std::thread::sleep(std::time::Duration::from_secs(tries));
         }
         tries += 1;
-        let target_url = url::Url::parse_with_params(monitor_url, &params)?;
+        let target_url = reqwest::Url::parse_with_params(monitor_url, &params)?;
         let mut res: reqwest::blocking::Response = match client.get(target_url).send() {
             Ok(res) => res,
             Err(e) => {
@@ -133,7 +132,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if config.services.is_empty() {
         return Err("Error in config: services should not be empty".into());
     }
-    if let Err(e) = url::Url::parse(&config.monitor_url) {
+    if let Err(e) = reqwest::Url::parse(&config.monitor_url) {
         return Err(format!("Error in config: monitor_url: {}", e).into());
     }
     let conn = dbus::blocking::Connection::new_system()?;

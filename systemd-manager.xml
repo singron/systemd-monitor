@@ -43,6 +43,9 @@
   <property name="Virtualization" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="ConfidentialVirtualization" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="Architecture" type="s" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -83,6 +86,12 @@
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="FinishTimestampMonotonic" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="ShutdownStartTimestamp" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="ShutdownStartTimestampMonotonic" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="SecurityStartTimestamp" type="t" access="read">
@@ -185,6 +194,9 @@
   <property name="NFailedJobs" type="u" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
+  <property name="TransactionsWithOrderingCycle" type="at" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
   <property name="Progress" type="d" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
@@ -272,10 +284,10 @@
   <property name="DefaultStartLimitBurst" type="u" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
-  <property name="DefaultCPUAccounting" type="b" access="read">
+  <property name="DefaultIOAccounting" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
-  <property name="DefaultBlockIOAccounting" type="b" access="read">
+  <property name="DefaultIPAccounting" type="b" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <property name="DefaultMemoryAccounting" type="b" access="read">
@@ -383,6 +395,12 @@
   <property name="DefaultTasksMax" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
   </property>
+  <property name="DefaultMemoryPressureThresholdUSec" type="t" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
+  <property name="DefaultMemoryPressureWatch" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="false"/>
+  </property>
   <property name="TimerSlackNSec" type="t" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
@@ -392,7 +410,13 @@
   <property name="DefaultOOMScoreAdjust" type="i" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
+  <property name="DefaultRestrictSUIDSGID" type="b" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
   <property name="CtrlAltDelBurstAction" type="s" access="read">
+   <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
+  </property>
+  <property name="SoftRebootsCount" type="u" access="read">
    <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="const"/>
   </property>
   <method name="GetUnit">
@@ -484,6 +508,18 @@
    <arg type="s" name="whom" direction="in"/>
    <arg type="i" name="signal" direction="in"/>
   </method>
+  <method name="KillUnitSubgroup">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="s" name="whom" direction="in"/>
+   <arg type="s" name="subgroup" direction="in"/>
+   <arg type="i" name="signal" direction="in"/>
+  </method>
+  <method name="QueueSignalUnit">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="s" name="whom" direction="in"/>
+   <arg type="i" name="signal" direction="in"/>
+   <arg type="i" name="value" direction="in"/>
+  </method>
   <method name="CleanUnit">
    <arg type="s" name="name" direction="in"/>
    <arg type="as" name="mask" direction="in"/>
@@ -538,6 +574,11 @@
    <arg type="s" name="unit_name" direction="in"/>
    <arg type="s" name="subcgroup" direction="in"/>
    <arg type="au" name="pids" direction="in"/>
+  </method>
+  <method name="RemoveSubgroupFromUnit">
+   <arg type="s" name="unit_name" direction="in"/>
+   <arg type="s" name="subcgroup" direction="in"/>
+   <arg type="t" name="flags" direction="in"/>
   </method>
   <method name="AbandonScope">
    <arg type="s" name="name" direction="in"/>
@@ -610,6 +651,10 @@
    <annotation name="org.freedesktop.systemd1.Privileged" value="true"/>
   </method>
   <method name="Reboot">
+   <annotation name="org.freedesktop.systemd1.Privileged" value="true"/>
+  </method>
+  <method name="SoftReboot">
+   <arg type="s" name="new_root" direction="in"/>
    <annotation name="org.freedesktop.systemd1.Privileged" value="true"/>
   </method>
   <method name="PowerOff">
@@ -763,6 +808,10 @@
   </method>
   <method name="GetDynamicUsers">
    <arg type="a(us)" name="users" direction="out"/>
+  </method>
+  <method name="DumpUnitFileDescriptorStore">
+   <arg type="s" name="name" direction="in"/>
+   <arg type="a(suuutuusu)" name="entries" direction="out"/>
   </method>
   <signal name="UnitNew">
    <arg type="s" name="id"/>
